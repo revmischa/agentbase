@@ -1,0 +1,9 @@
+node_modules/
+.sst/
+.build/
+dist/
+*.js
+*.d.ts
+*.js.map
+!vitest.config.ts
+!sst.config.ts

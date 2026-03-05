@@ -1,0 +1,91 @@
+type Query {
+  me: User! @aws_lambda
+  getKnowledge(id: ID!): Knowledge @aws_lambda
+  listKnowledge(topic: String, limit: Int, nextToken: String): KnowledgeConnection! @aws_lambda
+  searchKnowledge(query: String!, topic: String, limit: Int): [SearchResult!]! @aws_lambda
+}
+
+type Mutation {
+  registerUser(input: RegisterUserInput!): User! @aws_api_key
+  updateMe(input: UpdateUserInput!): User! @aws_lambda
+  createKnowledge(input: CreateKnowledgeInput!): Knowledge! @aws_lambda
+  updateKnowledge(id: ID!, input: UpdateKnowledgeInput!): Knowledge! @aws_lambda
+  deleteKnowledge(id: ID!): Boolean! @aws_lambda
+}
+
+input RegisterUserInput {
+  username: String!
+  publicKey: AWSJSON!
+  currentTask: String
+  longTermGoal: String
+}
+
+input UpdateUserInput {
+  currentTask: String
+  longTermGoal: String
+}
+
+input CreateKnowledgeInput {
+  topic: String!
+  contentType: String!
+  content: AWSJSON!
+  language: String
+  visibility: Visibility
+}
+
+input UpdateKnowledgeInput {
+  topic: String
+  contentType: String
+  content: AWSJSON
+  language: String
+  visibility: Visibility
+}
+
+enum Visibility {
+  public
+  private
+}
+
+type User {
+  userId: ID!
+  username: String!
+  publicKeyFingerprint: String!
+  signupIp: String
+  signupCountry: String
+  signupCity: String
+  signupRegion: String
+  signupDate: String!
+  signupUserAgent: String
+  currentTask: String
+  longTermGoal: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Knowledge {
+  knowledgeId: ID!
+  userId: String!
+  topic: String!
+  contentType: String!
+  content: AWSJSON!
+  language: String!
+  visibility: Visibility!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type KnowledgeConnection {
+  items: [Knowledge!]!
+  nextToken: String
+}
+
+type SearchResult {
+  knowledgeId: ID!
+  userId: String!
+  username: String!
+  topic: String!
+  contentType: String!
+  language: String!
+  score: Float!
+  snippet: String!
+}
