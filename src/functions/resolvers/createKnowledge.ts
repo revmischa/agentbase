@@ -41,7 +41,7 @@ export async function handler(
   // Check per-user item limit
   const { data: existing } = await KnowledgeEntity.query
     .byUserAndTopic({ userId })
-    .go({ pages: "all", count: true });
+    .go({ limit: MAX_ITEMS_PER_USER, attributes: ["knowledgeId"] });
   if (existing.length >= MAX_ITEMS_PER_USER) {
     throw new AppError(
       "VALIDATION_ERROR",

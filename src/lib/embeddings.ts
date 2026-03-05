@@ -58,7 +58,7 @@ async function ensureVectorIndex(): Promise<void> {
       distanceMetric: "cosine",
       dataType: "float32",
       metadataConfiguration: {
-        nonFilterableMetadataKeys: [],
+        nonFilterableMetadataKeys: ["raw"],
       },
     }),
   );

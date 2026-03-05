@@ -46,7 +46,7 @@ enum Visibility {
   private
 }
 
-type User {
+type User @aws_api_key @aws_lambda {
   userId: ID!
   username: String!
   publicKeyFingerprint: String!

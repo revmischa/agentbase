@@ -53,6 +53,7 @@ export async function handler(
 
   const { data: updated } = await KnowledgeEntity.patch({ knowledgeId: id })
     .set(updates)
+    .composite({ createdAt: existing.createdAt })
     .go({ response: "all_new" });
 
   // Re-generate embedding if content changed
