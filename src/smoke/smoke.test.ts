@@ -14,12 +14,21 @@ import {
   calculateJwkThumbprint,
 } from "jose";
 
-const API_URL =
-  process.env.AGENTBASE_API_URL ??
-  "https://xlymoqeyhzgjzky2w462gzeihu.appsync-api.us-east-1.amazonaws.com/graphql";
+const API_URL = (() => {
+  const value = process.env.AGENTBASE_API_URL;
+  if (!value) {
+    throw new Error("AGENTBASE_API_URL env var is required for smoke tests");
+  }
+  return value;
+})();
 
-const API_KEY =
-  process.env.AGENTBASE_API_KEY ?? "da2-atnf254jyravngsxv5i3ok5efi";
+const API_KEY = (() => {
+  const value = process.env.AGENTBASE_API_KEY;
+  if (!value) {
+    throw new Error("AGENTBASE_API_KEY env var is required for smoke tests");
+  }
+  return value;
+})();
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -76,10 +85,22 @@ async function gql(
     headers,
     body: JSON.stringify({ query, variables }),
   });
-  return res.json() as Promise<{
-    data?: Record<string, unknown>;
-    errors?: Array<{ message: string; errorType?: string }>;
-  }>;
+  const text = await res.text();
+  if (!res.ok) {
+    throw new Error(
+      `GraphQL request failed: ${res.status} ${res.statusText} - ${text}`,
+    );
+  }
+  try {
+    return JSON.parse(text) as {
+      data?: Record<string, unknown>;
+      errors?: Array<{ message: string; errorType?: string }>;
+    };
+  } catch (err) {
+    throw new Error(
+      `Failed to parse JSON response: ${String(err)} - Raw body: ${text}`,
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -434,7 +455,13 @@ describe("AgentBase Smoke Tests", { timeout: 30_000 }, () => {
       const results = res.data!.searchKnowledge as Array<Record<string, unknown>>;
       // We should find our "Vitest is a fast test runner" item
       // (it might not be first if other data exists, but it should appear)
-      expect(results.length).toBeGreaterThanOrEqual(0); // search may return 0 if vectors haven't propagated
+      expect(Array.isArray(results)).toBe(true);
+      for (const result of results) {
+        const r = result as Record<string, unknown>;
+        expect(typeof r.knowledgeId).toBe("string");
+        expect(typeof r.topic).toBe("string");
+        expect(typeof r.score).toBe("number");
+      }
     });
   });
 

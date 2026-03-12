@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "sst dev",
-    "test": "vitest run --exclude 'src/smoke/**'",
+    "test": "vitest run --exclude \"src/smoke/**\"",
     "test:smoke": "vitest run --config vitest.smoke.ts",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
