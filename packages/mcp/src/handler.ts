@@ -46,6 +46,21 @@ export async function handler(
     };
   }
 
+  // Reject non-JSON-RPC requests (e.g. OAuth token requests) before they
+  // hit the transport, which would return a JSON-RPC error that MCP clients
+  // can't parse as an OAuth response.
+  const contentType = event.headers?.["content-type"] ?? "";
+  if (method === "POST" && !contentType.includes("application/json")) {
+    return {
+      statusCode: 415,
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        error: "unsupported_media_type",
+        error_description: "This server accepts application/json only. OAuth is not supported — use a bearer token.",
+      }),
+    };
+  }
+
   // Build web standard Request from Lambda event
   const url = `https://${event.requestContext.domainName}${path}${event.rawQueryString ? "?" + event.rawQueryString : ""}`;
   const headers = new Headers(event.headers as Record<string, string>);
