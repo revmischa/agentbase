@@ -15,7 +15,7 @@ import {
 
 const API_URL =
   process.env.AGENTBASE_API_URL ??
-  "https://xlymoqeyhzgjzky2w462gzeihu.appsync-api.us-east-1.amazonaws.com/graphql";
+  "https://27ntff3y5jdalifhypsi4qehf4.appsync-api.us-east-1.amazonaws.com/graphql";
 
 
 // ---------------------------------------------------------------------------
