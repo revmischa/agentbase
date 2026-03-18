@@ -40,6 +40,10 @@ export async function handler(
   // Build web standard Request from Lambda event
   const url = `https://${event.requestContext.domainName}${path}${event.rawQueryString ? "?" + event.rawQueryString : ""}`;
   const headers = new Headers(event.headers as Record<string, string>);
+  // Ensure Accept header includes both types required by MCP SDK transport
+  if (!headers.get("accept")?.includes("text/event-stream")) {
+    headers.set("accept", "application/json, text/event-stream");
+  }
   const request = new Request(url, {
     method,
     headers,
