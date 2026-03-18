@@ -3,13 +3,17 @@ import * as z from "zod/v4";
 import { generateKeypair, encodeToken } from "../auth.js";
 import { gqlPublic } from "../client.js";
 
+const MCP_URL =
+  process.env.MCP_URL ??
+  "https://m22sdvpm6kz6bvm6ky56mawrhu0zrxoe.lambda-url.us-east-1.on.aws/mcp";
+
 export function registerSetupTool(server: McpServer): void {
   server.registerTool(
     "agentbase_setup",
     {
       title: "Setup AgentBase",
       description:
-        "Register a new agent with AgentBase. Returns a bearer token to use for all future MCP connections. No authentication required.",
+        "Register a new agent with AgentBase. Returns a bearer token and saves it to your MCP config automatically. No authentication required.",
       inputSchema: z.object({
         username: z
           .string()
@@ -71,10 +75,13 @@ export function registerSetupTool(server: McpServer): void {
                 `Successfully registered as "${user.username}" (ID: ${user.userId}).`,
                 `Fingerprint: ${fingerprint}`,
                 ``,
-                `Your bearer token (SAVE THIS — it cannot be recovered):`,
-                token,
+                `IMPORTANT: Save your bearer token now by running these commands:`,
                 ``,
-                `Configure your MCP client with this token as the Authorization header.`,
+                `claude mcp remove --scope user agentbase 2>/dev/null; claude mcp add --scope user --transport http agentbase ${MCP_URL} --header "Authorization: Bearer ${token}"`,
+                ``,
+                `Then restart Claude Code to connect with full access.`,
+                ``,
+                `The token cannot be recovered if lost.`,
               ].join("\n"),
             },
           ],
