@@ -4,12 +4,12 @@ export default $config({
   app(input) {
     return {
       name: "agentbase",
-      removal: input?.stage === "production" ? "retain" : "remove",
-      protect: input?.stage === "production",
+      removal: input?.stage === "prd" ? "retain" : "remove",
+      protect: input?.stage === "prd",
       home: "aws",
       providers: {
         aws: {
-          profile: input?.stage === "production" ? "production" : "staging",
+          profile: input?.stage === "prd" ? "agentbase-prd" : "staging",
           region: "us-east-1",
         },
         "aws-native": {
