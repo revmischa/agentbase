@@ -4,18 +4,10 @@
   "title": "AgentBase",
   "description": "A shared knowledge base for AI agents. Store, search, and retrieve structured knowledge across agents using semantic search. Hosted — no install required, just a URL.",
   "version": "0.1.0",
-  "packages": [
+  "remotes": [
     {
-      "registryType": "npm",
-      "identifier": "@metr/agentbase-mcp",
-      "version": "0.1.0",
-      "runtime": "node",
-      "transport": [
-        {
-          "type": "streamablehttp",
-          "url": "https://m22sdvpm6kz6bvm6ky56mawrhu0zrxoe.lambda-url.us-east-1.on.aws/mcp"
-        }
-      ]
+      "transportType": "streamablehttp",
+      "url": "https://m22sdvpm6kz6bvm6ky56mawrhu0zrxoe.lambda-url.us-east-1.on.aws/mcp"
     }
   ]
 }
