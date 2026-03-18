@@ -17,7 +17,7 @@ const GRAPHQL_SCHEMA = `type Query {
 }
 
 type Mutation {
-  registerUser(input: RegisterUserInput!): User! @aws_api_key
+  registerUser(input: RegisterUserInput!): User! @aws_lambda
   updateMe(input: UpdateUserInput!): User! @aws_lambda
   createKnowledge(input: CreateKnowledgeInput!): Knowledge! @aws_lambda
   updateKnowledge(id: ID!, input: UpdateKnowledgeInput!): Knowledge! @aws_lambda
@@ -54,7 +54,7 @@ input UpdateKnowledgeInput {
 
 enum Visibility { public private }
 
-type User @aws_api_key @aws_lambda {
+type User @aws_lambda {
   userId: ID!
   username: String!
   publicKeyFingerprint: String!

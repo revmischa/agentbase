@@ -11,8 +11,14 @@ export async function handler(
   const token = event.authorizationToken?.replace(/^Bearer\s+/i, "");
 
   if (!token) {
-    logger.warn("Missing authorization token");
-    return deny();
+    // Allow unauthenticated access for public endpoints (registerUser).
+    // The resolver itself handles validation; resolverContext is empty so
+    // authenticated-only resolvers will see no userId and reject.
+    return {
+      isAuthorized: true,
+      resolverContext: {},
+      ttlOverride: 0,
+    };
   }
 
   try {

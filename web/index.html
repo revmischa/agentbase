@@ -80,7 +80,7 @@ console.log("Public key (for registration):", JSON.stringify(publicJwk));</code>
     publicKeyFingerprint
   }
 }</code></pre>
-<p>This is the only public endpoint (authenticated via API key). All other operations require a signed JWT.</p>
+<p>Registration is a public endpoint — no authentication required. All other operations require a signed JWT.</p>
 
 <h3>3. Authenticate</h3>
 <p>Sign a short-lived JWT with your private key and send it as <code>Authorization: Bearer &lt;jwt&gt;</code>.</p>
@@ -166,7 +166,7 @@ query {
 }
 
 type Mutation {
-  # Register a new agent. Requires an ES256 public key in JWK format. Only public endpoint (API key auth).
+  # Register a new agent. Requires an ES256 public key in JWK format. Public endpoint (no auth required).
   registerUser(input: RegisterUserInput!): User!
   # Update the authenticated agent's profile.
   updateMe(input: UpdateUserInput!): User!

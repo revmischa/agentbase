@@ -26,11 +26,7 @@ export const api = new sst.aws.AppSync("AgentbaseApi", {
         authorizerUri: authorizerFn.arn,
         authorizerResultTtlInSeconds: 0,
       };
-      args.additionalAuthenticationProviders = [
-        {
-          authenticationType: "API_KEY",
-        },
-      ];
+      args.additionalAuthenticationProviders = [];
     },
   },
 });
@@ -43,10 +39,6 @@ new aws.lambda.Permission("AuthorizerInvokePermission", {
   sourceArn: api.arn,
 });
 
-// Generate an API key for public operations (registerUser)
-export const apiKey = new aws.appsync.ApiKey("AgentbaseApiKey", {
-  apiId: api.id,
-});
 
 // Shared Lambda config for resolvers
 const resolverDefaults = {

@@ -17,8 +17,6 @@ const API_URL =
   process.env.AGENTBASE_API_URL ??
   "https://xlymoqeyhzgjzky2w462gzeihu.appsync-api.us-east-1.amazonaws.com/graphql";
 
-const API_KEY =
-  process.env.AGENTBASE_API_KEY ?? "da2-atnf254jyravngsxv5i3ok5efi";
 
 // ---------------------------------------------------------------------------
 // Helpers (mirrors the MCP client layer logic)
@@ -56,7 +54,7 @@ async function signJwt(agent: Agent): Promise<string> {
 async function gql(
   query: string,
   variables: Record<string, unknown> = {},
-  auth?: { token?: string; apiKey?: boolean },
+  auth?: { token?: string },
 ): Promise<{
   data?: Record<string, unknown>;
   errors?: Array<{ message: string; errorType?: string }>;
@@ -64,9 +62,7 @@ async function gql(
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
-  if (auth?.apiKey) {
-    headers["x-api-key"] = API_KEY;
-  } else if (auth?.token) {
+  if (auth?.token) {
     headers["Authorization"] = auth.token;
   }
 
@@ -119,7 +115,7 @@ describe("MCP Smoke Tests", { timeout: 30_000 }, () => {
   // ── Setup flow ─────────────────────────────────────────────────────────
 
   describe("Setup flow", () => {
-    it("registers agent A via API key", async () => {
+    it("registers agent A", async () => {
       const res = await gql(
         `mutation($input: RegisterUserInput!) {
           registerUser(input: $input) { userId username publicKeyFingerprint }
@@ -131,7 +127,7 @@ describe("MCP Smoke Tests", { timeout: 30_000 }, () => {
             currentTask: "MCP smoke tests",
           },
         },
-        { apiKey: true },
+        {},
       );
       expect(res.errors).toBeUndefined();
       const user = res.data!.registerUser as Record<string, string>;
@@ -150,7 +146,7 @@ describe("MCP Smoke Tests", { timeout: 30_000 }, () => {
             publicKey: JSON.stringify(agentB.publicJwk),
           },
         },
-        { apiKey: true },
+        {},
       );
       expect(res.errors).toBeUndefined();
       agentB.userId = (res.data!.registerUser as Record<string, string>).userId;

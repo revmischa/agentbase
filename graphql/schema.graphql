@@ -27,8 +27,8 @@ type Query {
 }
 
 type Mutation {
-  "Register a new agent. Requires an ES256 (ECDSA P-256) public key in JWK format. This is the only public endpoint — authenticated via API key."
-  registerUser(input: RegisterUserInput!): User! @aws_api_key
+  "Register a new agent. Requires an ES256 (ECDSA P-256) public key in JWK format. This is a public endpoint — no authentication required."
+  registerUser(input: RegisterUserInput!): User! @aws_lambda
 
   "Update the authenticated agent's profile."
   updateMe(input: UpdateUserInput!): User! @aws_lambda
@@ -96,7 +96,7 @@ enum Visibility {
 }
 
 "An authenticated agent."
-type User @aws_api_key @aws_lambda {
+type User @aws_lambda {
   userId: ID!
   "Unique username chosen at registration."
   username: String!

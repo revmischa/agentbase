@@ -22,13 +22,6 @@ const API_URL = (() => {
   return value;
 })();
 
-const API_KEY = (() => {
-  const value = process.env.AGENTBASE_API_KEY;
-  if (!value) {
-    throw new Error("AGENTBASE_API_KEY env var is required for smoke tests");
-  }
-  return value;
-})();
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -69,14 +62,12 @@ async function signJwt(
 async function gql(
   query: string,
   variables: Record<string, unknown> = {},
-  auth?: { token?: string; apiKey?: boolean },
+  auth?: { token?: string },
 ): Promise<{ data?: Record<string, unknown>; errors?: Array<{ message: string; errorType?: string }> }> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
-  if (auth?.apiKey) {
-    headers["x-api-key"] = API_KEY;
-  } else if (auth?.token) {
+  if (auth?.token) {
     headers["Authorization"] = auth.token;
   }
 
@@ -141,7 +132,7 @@ describe("AgentBase Smoke Tests", { timeout: 30_000 }, () => {
             longTermGoal: "Validating AgentBase",
           },
         },
-        { apiKey: true },
+        {},
       );
       expect(res.errors).toBeUndefined();
       const user = res.data!.registerUser as Record<string, string>;
@@ -162,7 +153,7 @@ describe("AgentBase Smoke Tests", { timeout: 30_000 }, () => {
             publicKey: JSON.stringify(agentB.publicJwk),
           },
         },
-        { apiKey: true },
+        {},
       );
       expect(res.errors).toBeUndefined();
       agentB.userId = (res.data!.registerUser as Record<string, string>).userId;
@@ -180,7 +171,7 @@ describe("AgentBase Smoke Tests", { timeout: 30_000 }, () => {
             publicKey: JSON.stringify(dup.publicJwk),
           },
         },
-        { apiKey: true },
+        {},
       );
       expect(res.errors).toBeDefined();
       expect(res.errors![0].message).toMatch(/username.*taken/i);
@@ -193,7 +184,7 @@ describe("AgentBase Smoke Tests", { timeout: 30_000 }, () => {
           registerUser(input: $input) { userId }
         }`,
         { input: { username: "AB!!invalid", publicKey: JSON.stringify(agent.publicJwk) } },
-        { apiKey: true },
+        {},
       );
       expect(res.errors).toBeDefined();
     });
@@ -509,11 +500,11 @@ describe("AgentBase Smoke Tests", { timeout: 30_000 }, () => {
   // ── GraphQL Introspection ─────────────────────────────────────────────
 
   describe("Introspection", () => {
-    it("supports introspection via API key", async () => {
+    it("supports introspection without auth", async () => {
       const res = await gql(
         `{ __schema { queryType { name } mutationType { name } } }`,
         {},
-        { apiKey: true },
+        {},
       );
       expect(res.errors).toBeUndefined();
       const schema = res.data!.__schema as Record<string, Record<string, string>>;
@@ -525,7 +516,7 @@ describe("AgentBase Smoke Tests", { timeout: 30_000 }, () => {
       const res = await gql(
         `{ __schema { types { name kind } } }`,
         {},
-        { apiKey: true },
+        {},
       );
       expect(res.errors).toBeUndefined();
       const types = (res.data!.__schema as { types: Array<{ name: string }> }).types;

@@ -21,7 +21,7 @@ export default $config({
   async run() {
     const { table } = await import("./infra/database");
     const { vectorConfig } = await import("./infra/vectors");
-    const { api, apiKey } = await import("./infra/api");
+    const { api } = await import("./infra/api");
     const { cdn } = await import("./infra/cdn");
     const { site } = await import("./infra/website");
 
