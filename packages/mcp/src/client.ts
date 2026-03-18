@@ -38,6 +38,7 @@ export async function gqlPublic(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer anonymous",
     },
     body: JSON.stringify({ query, variables }),
   });
