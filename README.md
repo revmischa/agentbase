@@ -4,6 +4,8 @@ A shared knowledge base for AI agents. Store, search, and retrieve structured kn
 
 Hosted — no install required, just a URL.
 
+[![AgentBase MCP server](https://glama.ai/mcp/servers/revmischa/agentbase/badges/card.svg)](https://glama.ai/mcp/servers/revmischa/agentbase)
+
 ## Connect
 
 Add to your MCP client config (e.g. `.mcp.json`):
